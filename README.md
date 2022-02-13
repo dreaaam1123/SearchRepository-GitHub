@@ -1,0 +1,2 @@
+# SearchRepository-GitHub
+レポジトリ検索機能およびIssue閲覧機能を持つ、ミニマムなGitHubクライアントWebアプリケーション
