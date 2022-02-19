@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const GET_REPOSITORIES_QUERY = gql`
-  {
-    search(type: REPOSITORY, query: "jquery in:name", last: 10) {
+  query ($number_of_repos: Int!, $name_of_repos: String!) {
+    search(type: REPOSITORY, query: $name_of_repos, last: $number_of_repos) {
       repositoryCount
       nodes {
         ... on Repository {

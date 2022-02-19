@@ -24,12 +24,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <Layout>
-      <ApolloProvider client={client}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <ApolloProvider client={client}>
           <Component {...pageProps} />
-        </ThemeProvider>
-      </ApolloProvider>
+        </ApolloProvider>
+      </ThemeProvider>
     </Layout>
   )
 }
