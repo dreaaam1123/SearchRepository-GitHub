@@ -16,7 +16,8 @@ const Home: NextPage = () => {
 }
 
 const getApi = async () => {
-  const token = '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'
+  const token = process.env.NEXT_PUBLIC_GITHUB_PERSONAL_ACCESS_TOKEN
+  console.log(token)
   // const res = await fetch('https://api.github.com/graphql')
   const res = await fetch(
     'https://api.github.com/graphql?"query": "query {repository(name: "Hello-World")}"',
