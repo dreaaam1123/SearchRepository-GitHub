@@ -3,46 +3,31 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { Button } from '@material-ui/core'
+import { useQuery } from '@apollo/client'
+import { GET_REPOSITORIES_QUERY, RepositoriesData } from '../graphql/repositories-query'
 
 const Home: NextPage = () => {
+  const { loading, error, data } = useQuery<RepositoriesData>(GET_REPOSITORIES_QUERY)
+
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {JSON.stringify(error)}</p>
+  if (!data || !data.search || !data.search.nodes) return null
+
   return (
     <div className={styles.container}>
       TODO: レポジトリ検索
-      <Button variant='contained' onClick={() => getApi()}>
-        API叩く
+      {data?.search?.nodes.map((item) => (
+        <div key={item.id}>
+          【{item.nameWithOwner}】
+          <br />
+          {item.description}
+        </div>
+      ))}
+      <Button variant='contained' onClick={() => {}}>
+        Show more
       </Button>
     </div>
   )
-}
-
-const getApi = async () => {
-  const token = process.env.NEXT_PUBLIC_GITHUB_PERSONAL_ACCESS_TOKEN
-  console.log(token)
-  // const res = await fetch('https://api.github.com/graphql')
-  const res = await fetch(
-    'https://api.github.com/graphql?"query": "query {repository(name: "Hello-World")}"',
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: `Bearer ${token}`,
-      },
-      // query: '"query": "query {repository(name: "Hello-World")}"',
-
-      // body: JSON.stringify({
-      //   ...data,
-      // }),
-    },
-  )
-  // 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
-  const json = await res.json()
-  // const topArticles = topJson?.articles;
-
-  return {
-    props: {
-      json,
-    },
-  }
 }
 
 export default Home
