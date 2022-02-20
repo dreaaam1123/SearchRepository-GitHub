@@ -85,7 +85,7 @@ const Home: NextPage = () => {
       <Button variant='contained' onClick={searchGitHub}>
         Search
       </Button>
-      {!!data ? repositoriesList(data, fetchMore) : null}
+      {data ? repositoriesList(data, fetchMore) : null}
     </div>
   )
 }

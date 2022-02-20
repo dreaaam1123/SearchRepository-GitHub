@@ -9,14 +9,10 @@ import { GET_ISSUES_QUERY, IssuesData } from '../../graphql/issues-query'
 function issuesList(data: IssuesData): JSX.Element | null {
   const { repository } = data
   const { issues } = repository
-  if (
-    !data ||
-    !data.repository ||
-    !data.repository.issues ||
-    !data.repository.issues.nodes ||
-    data.repository.issues.totalCount === 0
-  )
+  if (!data || !data.repository || !data.repository.issues || !data.repository.issues.nodes)
     return null
+
+  if (data.repository.issues.totalCount === 0) return <span>none</span>
 
   return (
     <Box
@@ -54,16 +50,17 @@ const IssuesListPage: NextPage = () => {
     },
   })
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error: {JSON.stringify(error)}</p>
-
   return (
     <div className={styles.container}>
-      <h3>repository name:{name}</h3>
       <Link href='/' passHref>
         <Button variant='contained'>レポジトリ検索へ戻る</Button>
       </Link>
-      {!!data ? issuesList(data) : null}
+      <h3>
+        Latest Issues - {owner}/{name}
+      </h3>
+      {loading ? <p>Loading...</p> : null}
+      {error ? <p>Error: {JSON.stringify(error)}</p> : null}
+      {data ? issuesList(data) : null}
     </div>
   )
 }
