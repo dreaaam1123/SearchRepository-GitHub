@@ -7,7 +7,23 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import theme from '../pages/theme'
 import Layout from '../components/Layout'
 
-const cache = new InMemoryCache()
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        search: {
+          keyArgs: false,
+          merge(existing, incoming) {
+            if (!incoming || !incoming.nodes) return existing
+            if (!existing || !existing.nodes) return incoming
+
+            return { ...incoming, nodes: [...existing.nodes, ...incoming.nodes] }
+          },
+        },
+      },
+    },
+  },
+})
 const client = new ApolloClient({
   uri: process.env.NEXT_PUBLIC_GITHUB_GRAPHQL_URL,
   headers: {

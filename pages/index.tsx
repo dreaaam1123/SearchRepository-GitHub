@@ -3,23 +3,41 @@ import { useState } from 'react'
 import styles from '../styles/Home.module.css'
 import { Button } from '@material-ui/core'
 import { useQuery } from '@apollo/client'
-import { GET_REPOSITORIES_QUERY, RepositoriesData } from '../graphql/repositories-query'
+import { GET_REPOSITORIES_QUERY, RepositoriesData, PageInfo } from '../graphql/repositories-query'
 
-const Home: NextPage = () => {
-  const [searchName, setState] = useState('')
-  const { loading, error, data, refetch } = useQuery<RepositoriesData>(GET_REPOSITORIES_QUERY, {
-    variables: {
-      name_of_repos: ``,
-      number_of_repos: 10,
-    },
-  })
-
-  const search = () => {
-    refetch({ name_of_repos: `${searchName} in:name` })
+function showMoreButton(pageInfo: PageInfo, fetchMore: any): JSX.Element | null {
+  if (!pageInfo.hasNextPage) {
+    // これ以上読み込みがない場合はボタン非表示
+    return null
   }
 
   const showMore = () => {
-    // TODO：showMore
+    fetchMore({
+      variables: { cursor: pageInfo.endCursor },
+    })
+  }
+
+  return (
+    <Button variant='contained' onClick={showMore}>
+      Show more
+    </Button>
+  )
+}
+
+const Home: NextPage = () => {
+  const [searchName, setState] = useState('')
+  const { loading, error, data, refetch, fetchMore } = useQuery<RepositoriesData>(
+    GET_REPOSITORIES_QUERY,
+    {
+      variables: {
+        name_of_repos: '',
+        number_of_repos: 10,
+      },
+    },
+  )
+
+  const searchGitHub = () => {
+    refetch({ name_of_repos: `${searchName} in:name` })
   }
 
   if (loading) return <p>Loading...</p>
@@ -28,33 +46,28 @@ const Home: NextPage = () => {
     return (
       <div className={styles.container}>
         <input type='text' value={searchName} onChange={(e) => setState(e.currentTarget.value)} />
-        <Button variant='contained' onClick={search}>
+        <Button variant='contained' onClick={searchGitHub}>
           Search
         </Button>
       </div>
     )
+  const { search } = data
+  const { pageInfo } = search
 
   return (
     <div className={styles.container}>
       <input type='text' value={searchName} onChange={(e) => setState(e.currentTarget.value)} />
-      <Button variant='contained' onClick={search}>
+      <Button variant='contained' onClick={searchGitHub}>
         Search
       </Button>
-      {data?.search?.nodes.map((item) => (
+      {search.nodes.map((item) => (
         <div key={item.id}>
           【{item.nameWithOwner}】
           <br />
           {item.description}
         </div>
       ))}
-      <Button
-        variant='contained'
-        onClick={() => {
-          showMore
-        }}
-      >
-        Show more
-      </Button>
+      {showMoreButton(pageInfo, fetchMore)}
     </div>
   )
 }
