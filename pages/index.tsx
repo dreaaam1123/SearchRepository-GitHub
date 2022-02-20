@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import Link from 'next/link'
 import { useState } from 'react'
 import styles from '../styles/Home.module.css'
 import { TextField, Button, Box, List, ListItem, ListItemText } from '@material-ui/core'
@@ -23,9 +24,11 @@ function repositoriesList(data: RepositoriesData, fetchMore: any): JSX.Element |
     >
       <List>
         {search.nodes.map((item: any) => (
-          <ListItem key={item.id} divider={true} dense button={true}>
-            <ListItemText primary={item.nameWithOwner} secondary={item.description} />
-          </ListItem>
+          <Link href={`/${item.nameWithOwner}`} key={item.id} passHref>
+            <ListItem divider={true} dense button={true}>
+              <ListItemText primary={item.nameWithOwner} secondary={item.description} />
+            </ListItem>
+          </Link>
         ))}
         {showMoreButton(search.pageInfo, fetchMore)}
       </List>
@@ -82,7 +85,7 @@ const Home: NextPage = () => {
       <Button variant='contained' onClick={searchGitHub}>
         Search
       </Button>
-      {!!data ? repositoriesList(data, fetchMore) : null}
+      {data ? repositoriesList(data, fetchMore) : null}
     </div>
   )
 }
