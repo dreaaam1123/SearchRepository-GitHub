@@ -11,7 +11,6 @@ export default function Layout({ children }: Props) {
       <Head>
         <title>GitHub Issues Viewer</title>
       </Head>
-      <header>ヘッダ</header>
       <main>{children}</main>
     </>
   )
